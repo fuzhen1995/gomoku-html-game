@@ -124,13 +124,19 @@
       position: relative;
       width: 100%;
       height: 100%;
+      overflow: visible;
+    }
+
+    .board-grid {
+      position: absolute;
+      inset: clamp(18px, 5.5%, 34px);
       background-image:
         linear-gradient(var(--line) 1px, transparent 1px),
         linear-gradient(90deg, var(--line) 1px, transparent 1px);
       background-size:
         calc(100% / (var(--size) - 1)) calc(100% / (var(--size) - 1)),
         calc(100% / (var(--size) - 1)) calc(100% / (var(--size) - 1));
-      background-position: center;
+      background-position: top left;
       overflow: visible;
     }
 
@@ -439,7 +445,11 @@
       boardElement.innerHTML = "";
       boardElement.style.setProperty("--size", size);
 
-      addStarPoints();
+      const grid = document.createElement("div");
+      grid.className = "board-grid";
+      boardElement.appendChild(grid);
+
+      addStarPoints(grid);
 
       for (let row = 0; row < size; row += 1) {
         for (let col = 0; col < size; col += 1) {
@@ -453,21 +463,21 @@
           cell.setAttribute("role", "gridcell");
           cell.setAttribute("aria-label", `${row + 1} 行 ${col + 1} 列`);
           cell.addEventListener("click", () => placeStone(row, col));
-          boardElement.appendChild(cell);
+          grid.appendChild(cell);
         }
       }
 
       renderStones();
     }
 
-    function addStarPoints() {
+    function addStarPoints(grid) {
       const points = getStarPoints();
       points.forEach(([row, col]) => {
         const dot = document.createElement("span");
         dot.className = "dot";
         dot.style.left = `${(col / (size - 1)) * 100}%`;
         dot.style.top = `${(row / (size - 1)) * 100}%`;
-        boardElement.appendChild(dot);
+        grid.appendChild(dot);
       });
     }
 
